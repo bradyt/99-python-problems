@@ -67,6 +67,7 @@ def myflatten(x):
         else:
             return [y] + myflatten(ys)
 
+
 # eliminate consecutive duplicates of list elements
 
 def compress(xs):
@@ -81,41 +82,45 @@ def compress(xs):
         else:
             return [y] + compress([z] + zs)
 
+
+
 # pack consecutive duplicates of list elements into sublists
 # [a,a,a,a,b,c,c,a,a,d,e,e,e,e]
 # [[a,a],
 
-def pack(l):
-    return feeder_and_accumulator(l,[])
+# x --- x' --- x''
+#   \      \
+#    y'     y''    ...
+#     \      \
+# Y --- Y' --- Y''
 
-def feeder_and_accumulator(feeder,accumulator):
-    """function will take feeder and accumulator and generate next state,
-    until feeder is empty, at which point it will return the
-    accumulator
+def pack(x):
+    Y = []
+    recurse_x_and_Y(x,Y)
+    return Y
+
+def recurse_x_and_Y(x,Y):
+    """takes from feeder each pack of consecutively identical elements and
+    adds to accumulator
     """
-    if feeder:
-        (x,y) = feeder_to_next_and_pack(feeder)
-        accumulator += [y]
-        return feeder_and_accumulator(x,accumulator)
-    else:
-        return accumulator
 
-def feeder_to_next_and_pack(feeder):
-    """function will take feeder and output (feeder, pack)
-    """
-    head = feeder[0]
-    rest = feeder[1:]
-    return pull_off_to_pack(head,rest,[head])
+    def recurse_x_y_z(x, y, z):
+        """One by one, takes elements from feeder that are equal to current
+        element and adds them to current sub-accumulator
+        """
+        if x and z == x[0]:
+            y.append(z)
+            x.pop(0)
+            recurse_x_y_z(x, y, z)
 
-def pull_off_to_pack(elem,rest,pack):
-    """will pull elem off rest into pack, and return (rest, pack)
-    """
-    if rest and elem == rest[0]:
-        pack += [elem]
-        return pull_off_to_pack(elem,rest[1:],pack)
-    else:
-        return rest, pack
+    if x:
+        y = []
+        z = x[0]
+        recurse_x_y_z(x, y, z)
+        Y.append(y)
+        recurse_x_and_Y(x, Y)
 
+
 # Run-length encoding of a list
 
 # encode([a,a,a,a,b,c,c,a,a,d,e,e,e,e]
@@ -138,3 +143,22 @@ def run_length_modified(l):
         return l[0]
     else:
         return length, l[0]
+
+# decode([[4,'a'],'b'])
+# ['a','a','a','a','b']
+    
+def decode(l):
+    return list(map(decode_each,l))
+
+def decode_each(x):
+    if type(x) == list:
+        n = x[0]
+        y = x[1]
+        z = []
+        for i in range(n):
+            z.append(y)
+        return z
+    else:
+        return x
+
+# myflatten(decode([[4, 'a'],'b']))
