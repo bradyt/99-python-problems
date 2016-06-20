@@ -100,7 +100,7 @@ def pack(x):
         """takes from feeder each pack of consecutively identical elements and
         adds to accumulator
         """
-        
+
         def recurse_x_y_z(x, y, z):
             """One by one, takes elements from feeder that are equal to current
             element and adds them to current sub-accumulator
@@ -109,18 +109,17 @@ def pack(x):
                 y.append(z)
                 x.pop(0)
                 recurse_x_y_z(x, y, z)
-                
+
         if x:
             y = []
             z = x[0]
             recurse_x_y_z(x, y, z)
             Y.append(y)
             recurse_x_and_Y(x, Y)
-                    
+
     Y = []
     recurse_x_and_Y(x,Y)
     return Y
-
 
 
 # Run-length encoding of a list
