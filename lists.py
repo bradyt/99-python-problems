@@ -95,30 +95,32 @@ def compress(xs):
 # Y --- Y' --- Y''
 
 def pack(x):
+
+    def recurse_x_and_Y(x,Y):
+        """takes from feeder each pack of consecutively identical elements and
+        adds to accumulator
+        """
+        
+        def recurse_x_y_z(x, y, z):
+            """One by one, takes elements from feeder that are equal to current
+            element and adds them to current sub-accumulator
+            """
+            if x and z == x[0]:
+                y.append(z)
+                x.pop(0)
+                recurse_x_y_z(x, y, z)
+                
+        if x:
+            y = []
+            z = x[0]
+            recurse_x_y_z(x, y, z)
+            Y.append(y)
+            recurse_x_and_Y(x, Y)
+                    
     Y = []
     recurse_x_and_Y(x,Y)
     return Y
 
-def recurse_x_and_Y(x,Y):
-    """takes from feeder each pack of consecutively identical elements and
-    adds to accumulator
-    """
-
-    def recurse_x_y_z(x, y, z):
-        """One by one, takes elements from feeder that are equal to current
-        element and adds them to current sub-accumulator
-        """
-        if x and z == x[0]:
-            y.append(z)
-            x.pop(0)
-            recurse_x_y_z(x, y, z)
-
-    if x:
-        y = []
-        z = x[0]
-        recurse_x_y_z(x, y, z)
-        Y.append(y)
-        recurse_x_and_Y(x, Y)
 
 
 # Run-length encoding of a list
