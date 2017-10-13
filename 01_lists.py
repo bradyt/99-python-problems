@@ -1,6 +1,8 @@
 
 # Find the last element of a list
 
+a = 1 + 1
+
 def mylength(a):
     if a == []:
         return 0
